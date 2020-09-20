@@ -26,6 +26,12 @@ Dapple.init = function init(env) {
     web3Obj.eth.getCode(contractAddress, (error, code) => {
       Session.set('contractExists', !error && typeof code === 'string' && code !== '' && code !== '0x');
     });
+
+    // update current UC prices - added by JON
+    if(Dapple.env === 'default') { // only published on local network so far
+      //const contract = web3Obj.eth.contract(abi).at(addr);
+    }
+
   }
 };
 
@@ -53,35 +59,51 @@ const tokenSpecs = {
   GUP: { precision: 3, format: '0,0.00[0]' },
   BAT: { precision: 18, format: '0,0.00[0000000000000000]' },
   NMR: { precision: 18, format: '0,0.00[0000000000000000]' },
+  UCCOL: { precision: 18, format: '0,0.00[0000000000000000]' },
 };
 
-Dapple.getQuoteTokens = () => ['W-ETH'];
+Dapple.getQuoteTokens = () => ['W-ETH', 'UCCOL'];
 
-Dapple.getBaseTokens = () => ['W-GNT', 'DGD', 'ICN', '1ST', 'SNGLS', 'VSL', 'PLU', 'MLN', 'RHOC', 'TIME', 'GUP', 'BAT', 'NMR'];
+Dapple.getBaseTokens = () => ['W-GNT'];
 
-Dapple.getTokens = () => ['W-ETH', 'MKR', 'DGD', 'GNT', 'W-GNT', 'ICN', '1ST', 'SNGLS', 'VSL', 'PLU', 'MLN', 'RHOC', 'TIME', 'GUP', 'BAT', 'NMR', 'SAI', 'DAI'];
+Dapple.getTokens = () => ['W-ETH', 'UC', 'UCCOL', 'MKR', 'SAI', 'DAI'];
 
 Dapple.generatePairs = () => {
   const TradingPairs = [
     {
-      base: 'MKR',
-      quote: 'W-ETH',
+      base: 'UC',
+      quote: 'UCCOL',
       priority: 10,
     },
     {
-      base: 'W-ETH',
-      quote: 'DAI',
+      base: 'UC',
+      quote: 'W-ETH',
       priority: 9,
     },
     {
       base: 'MKR',
-      quote: 'DAI',
+      quote: 'UCCOL',
       priority: 8,
+    },
+    {
+      base: 'MKR',
+      quote: 'W-ETH',
+      priority: 7,
+    },
+    {
+      base: 'W-ETH',
+      quote: 'DAI',
+      priority: 6,
+    },
+    {
+      base: 'MKR',
+      quote: 'DAI',
+      priority: 5,
     },
     {
       base: 'SAI',
       quote: 'DAI',
-      priority: 7,
+      priority: 4,
     },
   ];
 

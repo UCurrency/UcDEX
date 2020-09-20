@@ -8,7 +8,7 @@ $lg: 1024px;
 
 /* COLOURS */
 
-$background-color: #F8F7F5;
+$background-color: #1387c9; //#F8F7F5;
 $color-quote-currency: #795548;
 $color-base-currency: #8D86C9;
 $color-buy: #26A69A;
@@ -112,6 +112,7 @@ $max: 7;
 body {
   background-color: $background-color;
   margin-top: 40px;
+  color: #FFF; // custom by Jon
 }
 
 h2 {
@@ -126,6 +127,7 @@ h2 {
 
 table {
   width: 100%;
+  color: #888888; // custom by Jon
 }
 
 .container {
@@ -313,7 +315,7 @@ table {
 }
 
 .tabs {
-  width: 444px;
+  width: 640px; // JON changed from 444 to include mint/burn tab
   margin: 0 auto;
   min-height: 38px;
   position: relative;
@@ -363,12 +365,13 @@ table {
     .first-tab {
       border-radius: 100px 0 0 100px;
       width: 124px;
+      border-right: none;
     }
 
     .middle-tab {
       background-color: rgba(0, 0, 0, 0.0);
       border-radius: 0;
-      border-left: none;
+      //border-left: none;
       border-right: none;
       width: 196px;
     }
@@ -431,7 +434,7 @@ table {
       font-family: 'Montserrat', sans-serif;
       font-weight: 500;
       font-size: 12px;
-      color: #4F5362;
+      color: #FFFFFF; // #4F5362; JON
       letter-spacing: 0.58px;
       margin-bottom: 8px;
       line-height: 18px;
@@ -1885,7 +1888,7 @@ button.dex-btn-default.sell, button.dex-btn-max.sell {
       font-family: 'Montserrat', sans-serif;
       font-size: 16px;
       text-transform: uppercase;
-      color: #4A4A4A;
+      color: #FFF; // #4A4A4A;
     }
     a {
       @extend .montserrat-semibold;
@@ -2760,14 +2763,14 @@ span.right {
 
 a.logo {
   display: block;
-  width: 103px;
-  height: 37px;
-  background: url(logo-oasis.png);
-  background-size: 103px 37px;
+  width: 86px;
+  height: 71px;
+  background: url(logo-light.png);
+  background-size: 86px 71px;
 }
 
 a.logo:hover {
-  background-image: url(logo-oasis-hover.png);
+  background-image: url(logo.png);
 }
 
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {

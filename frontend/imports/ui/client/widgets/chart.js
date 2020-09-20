@@ -126,7 +126,7 @@ Template.chart.viewmodel({
           { buyWhichToken: baseCurrency, sellWhichToken: quoteCurrency },
           { buyWhichToken: quoteCurrency, sellWhichToken: baseCurrency },
         ],
-        timestamp: { $gte: moment(Date.now()).startOf('day').subtract(6, 'days').unix() },
+        timestamp: { $gte: moment(Date.now()).startOf('day').subtract(30, 'days').unix() }, // JON notes: hostory of just 6 days (originally). Changed to 30 days
       });
       const prices = trades.map((trade) => {
         let baseAmount;
@@ -468,7 +468,7 @@ Template.chart.viewmodel({
       days = [];
       volumes.base = {};
       volumes.quote = {};
-      for (let i = 6; i >= 0; i--) {
+      for (let i = 30; i >= 0; i--) { // JON notes: 6 = 6 days history? changed to 30
         day = moment(Date.now()).startOf('day').subtract(i, 'days');
         days.push(day);
         volumes.base[day.unix() * 1000] = new BigNumber(0);

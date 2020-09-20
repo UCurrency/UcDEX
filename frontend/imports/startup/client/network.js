@@ -5,19 +5,21 @@ import { Dapple, web3Obj } from 'meteor/makerotc:dapple';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import Redeemer from '/imports/utils/redeemer';
+import CrawlingBand from '/imports/utils/crawlingband';
+import Marketplace from '/imports/utils/marketplace';
 import Limits from '/imports/api/limits';
 import Transactions from '/imports/api/transactions';
 import Tokens from '/imports/api/tokens';
 import TokenEvents from '/imports/api/tokenEvents';
 import WGNT from '/imports/api/wgnt';
 import { Offers, Status } from '/imports/api/offers';
-import { doHashChange } from '/imports/utils/functions';
+import { doHashChange, formatNumber } from '/imports/utils/functions';
 
 // Check which accounts are available and if defaultAccount is still available,
 // Otherwise set it to localStorage, Session, or first element in accounts
 function checkAccounts() {
   return new Promise((resolve, reject) => {
-    web3Obj.eth.getAccounts((error, accounts) => {
+    web3Obj.eth.getAccounts((error, accounts) => { // JON: only bringing currrent account, not all
       if (!error) {
         if (!_.contains(accounts, web3Obj.eth.defaultAccount)) {
           if (_.contains(accounts, localStorage.getItem('address'))) {
@@ -100,6 +102,36 @@ async function checkIfUserHasOldMKR(userAddress) {
   });
 }
 
+async function checkUCPricefromCrawlingBand() {
+  if(Dapple.env === 'default') { // only published on local network so far
+    const crawlingband = new CrawlingBand(Dapple.env);
+    //// 2 options to get floorPrice, both work, one call method on class contract on class and method on page.
+    const ceilingPrice = crawlingband.contract.getEstimatedCeilingPrice(function(error, result){
+      if (!error) {
+      console.log('UC CeilingPrice: ' + result/1000000);
+      console.log('UC CeilingPriceX: ' + formatNumber(result/1000000, 6));
+      Session.set('ceilingPrice', result/1000000);
+      } else {
+        console.log('JON Error: ' + error);
+      }
+    });
+    const floorPrice = await crawlingband.getEstimatedFloorPrice();
+    console.log('UC Floorprice: ' + floorPrice/1000000);
+    console.log('UC FloorpriceX: ' + formatNumber(floorPrice/1000000, 6));
+    Session.set('floorPrice', floorPrice/1000000);
+
+    // test marketplace
+    const marketplace = new Marketplace(Dapple.env);
+    const collateralsCount = await marketplace.getCollateralsCount();
+    console.log('UC collateralsCount: ' + collateralsCount);
+    const collaterals = await marketplace.getCollaterals();
+    //console.log('UC collateralAddress: ' + collaterals);
+    if(collateralsCount > 0) {
+    console.log('UC collaterals: ' + collaterals[0]);
+    }
+  }
+}
+
 function checkIfOrderMatchingEnabled(marketType) {
   return new Promise((resolve, reject) => {
     if (marketType !== 'MatchingMarket') {
@@ -171,6 +203,7 @@ function initNetwork(newNetwork) {
     await checkIfUserHasOldMKR(account);
     checkIfUserHasBalanceInOldWrapper(account);
   });
+  checkUCPricefromCrawlingBand();
   const isMatchingEnabled = checkIfOrderMatchingEnabled(market.type);
   const isBuyEnabled = checkIfBuyEnabled(market.type);
   Promise.all([isMatchingEnabled, isBuyEnabled]).then(() => {
@@ -201,10 +234,12 @@ function checkNetwork() {
       if (isConnected) {
         web3Obj.eth.getBlock('latest', (e, res) => {
           if (!e) {
+            const sessionLatestBlock = Session.get('latestBlock');
             if (res && res.number >= Session.get('latestBlock')) {
               Session.set('outOfSync', e != null || (new Date().getTime() / 1000) - res.timestamp > 60000000); // JON notes: changed from 600 to 6000 because on test we don't create blocks offen
               Session.set('latestBlock', res.number);
-              if (Session.get('startBlock') === 0) {
+              const sessionStartBlock = Session.get('startBlock'); // JON debug
+              if (sessionStartBlock === 0 && res.number > 6000) { // JON added res.number > 600 to avoid negative starting block
                 console.log(`Setting startblock to ${res.number - 6000}`);
                 Session.set('startBlock', (res.number - 6000));
               }

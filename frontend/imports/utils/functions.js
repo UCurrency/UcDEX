@@ -62,6 +62,8 @@ export function doTabShow() {
     $('.nav-tabs a[href=#wrap]').tab('show');
   } else if (location.hash.indexOf('#transfer') !== -1) {
     $('.nav-tabs a[href=#transfer]').tab('show');
+  } else if (location.hash.indexOf('#uc') !== -1) {
+    $('.nav-tabs a[href=#uc]').tab('show');
   } else {
     $('.nav-tabs a[href=#trade]').tab('show');
   }
@@ -69,12 +71,12 @@ export function doTabShow() {
 
 export function doHashChange() {
   // For now is the only currency on the left side
-  localStorage.setItem('quoteCurrency', 'W-ETH');
+  localStorage.setItem('quoteCurrency', 'UCCOL'); // JON changed from W-ETH
 
   let quoteCurrency = null;
   let baseCurrency = null;
 
-  if (location.hash.indexOf('#wrap') === -1 && location.hash.indexOf('#transfer') === -1) {
+  if (location.hash.indexOf('#wrap') === -1 && location.hash.indexOf('#transfer') === -1 && location.hash.indexOf('#uc') === -1) {
     if (location.hash.indexOf('#trade') === -1) {
       location.hash = `#trade/${localStorage.getItem('baseCurrency') || 'MKR'}`
         + `/${localStorage.getItem('quoteCurrency') || 'W-ETH'}`;
@@ -90,10 +92,10 @@ export function doHashChange() {
     baseCurrency = asToken(base, 'MKR');
 
     const quote = coins[1];
-    quoteCurrency = asToken(quote, 'W-ETH');
+    quoteCurrency = asToken(quote, 'UCCOL'); // JON changed from W-ETH
 
     if (baseCurrency === quoteCurrency) {
-      quoteCurrency = 'W-ETH';
+      quoteCurrency = 'UCCOL'; // JON changed from W-ETH
       baseCurrency = 'MKR';
     }
 
@@ -107,7 +109,7 @@ export function doHashChange() {
       baseCurrency = pair.base;
       quoteCurrency = pair.quote;
     } else {
-      quoteCurrency = 'W-ETH';
+      quoteCurrency = 'UCCOL'; // JON changed from W-ETH
       baseCurrency = 'MKR';
     }
 

@@ -9,6 +9,7 @@ const web3Interval = setInterval(
   function() {
     if (window.web3) {
       web3Obj.setProvider(window.web3.currentProvider);
+      //web3Obj.setProvider(new Web3.providers.HttpProvider('http://localhost:8545')); // fix error "The method 'web3_clientVersion' does not exist / is not available." returned from network.js line 197 on "web3Obj.version.getNode" because this method is deprecated in favor of web.eth.getNodeInfo...but web.eth.getNodeInfo is not available on web3 0.20.7...UPDATE: somehow went back to original code and error didn't appeared. Also this code was causing to identify always local network on network.js line 232 (switch), even when on main network on metamask
       console.log('Using current provider');
       initWeb3();
     } else {
