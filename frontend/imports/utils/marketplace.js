@@ -1,4 +1,4 @@
-import { web3Obj } from 'meteor/makerotc:dapple';
+import { Dapple, web3Obj } from 'meteor/makerotc:dapple';
 
 const abi = [
     {
@@ -944,7 +944,15 @@ class Marketplace {
     for(var i = 0; i < collateralsCount; i++) {
         const address = await this.getCollateralAddressAtIndex(i);
         const collateral = await this.getCollateralAtAddress(address);
-        collaterals.push(collateral);
+        const collateralPlus = {
+            tokenAddr: collateral[0],
+            price: collateral[1],
+            orderbookBalance: collateral[2],
+            paused: collateral[3],
+            token: collateral[4],
+            symbol: Dapple.getTokenByAddress(address)
+        };
+        collaterals.push(collateralPlus);
     }
     return collaterals;
   }

@@ -127,7 +127,7 @@ async function checkUCPricefromCrawlingBand() {
     const collaterals = await marketplace.getCollaterals();
     //console.log('UC collateralAddress: ' + collaterals);
     if(collateralsCount > 0) {
-    console.log('UC collaterals: ' + collaterals[0]);
+    console.log('UC collaterals: ' + collaterals[0].symbol);
     }
   }
 }
