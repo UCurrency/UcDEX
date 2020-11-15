@@ -1,9 +1,14 @@
 <template name="ucprices">
     <div id="container-market" class="order-section-content">
       <div class="row">
-        <div class="col-xs-6">
+        <div class="col-xs-12">
           <h2>
             {{title}}
+            {{#if equals title 'MINT'}}
+            (US$ {{{formatNumber ceilingPrice '6' true}}})
+            {{else}}
+            (US$ {{{formatNumber floorPrice '6' true}}})
+            {{/if}}
           </h2>
         </div>
       </div>
@@ -15,7 +20,11 @@
             <th class="th-pair" style="">CURRENCY</th>
             <th class="th-price">PRICE</th>
             <th class="th-price">RATE</th>
+            {{#if equals title 'MINT'}}
             <th class="th-volume">WEEKLY VOLUME</th>
+            {{else}}
+            <th class="th-volume">BALANCE</th>
+            {{/if}}
             <th></th>
           </tr>
           </thead>
@@ -32,10 +41,21 @@
                 </td>
                 <td class="td-price">{{{formatNumber this.price '' true}}}</td>
                 <td class="td-price">
-                  {{{formatNumber this.price '' true}}}
+
+                  {{#if equals title 'MINT'}}
+                  <span>{{{formatNumber this.mintRate '6' true}}}</span>
+                  {{else}}
+                  <span>{{{formatNumber this.burnRate '6' true}}}</span>
+                  {{/if}}
+
+
                 </td>
                 <td class="td-volume">
-                  N/A
+                  {{#if equals title 'MINT'}}
+                  <span>N/A</span>
+                  {{else}}
+                  <span>{{{formatNumber this.balance '1' true}}}</span>
+                  {{/if}}
                 </td>
                 <td></td>
               </tr>

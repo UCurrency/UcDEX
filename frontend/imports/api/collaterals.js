@@ -6,14 +6,20 @@ import { formatNumber } from '/imports/utils/functions';
 
 class CollateralsCollection extends Mongo.Collection {
 
-    prepareRow(collateral) {
+    prepareRow(collateral, balance) {
+        const cPrice = Session.get('ceilingPrice');
+        const fPrice = Session.get('floorPrice');
+        const colPrice = formatNumber(collateral.price/1000000, 6);
         const row = {
             tokenAddr: collateral.tokenAddr,
-            price: formatNumber(collateral.price/1000000, 6),
+            price: colPrice,
             orderbookBalance: collateral.orderbookBalance, // event doesn't bring block timestamp info
             paused: collateral.paused,
             token: collateral.token,
-            symbol: collateral.symbol
+            symbol: collateral.symbol,
+            mintRate: formatNumber(cPrice/colPrice, 6),
+            burnRate: formatNumber(fPrice/colPrice, 6),
+            balance: formatNumber(balance, 1)
             //type: event.toLowerCase(),
         };
         // // Handle different kinds of contract events
@@ -55,9 +61,11 @@ class CollateralsCollection extends Mongo.Collection {
             if(count > 0) {
                 marketplace.getCollaterals().then((collaterals) => {
                     collaterals.forEach((collateral) => {
-                        const row = this.prepareRow(collateral);
-                        //super.insert(row);
-                        super.upsert(collateral.tokenAddr, row);
+                        marketplace.getCollateralBalance(collateral.tokenAddr, false).then((balance) => {
+                            const row = this.prepareRow(collateral, balance);
+                            //super.insert(row);
+                            super.upsert(collateral.tokenAddr, row);
+                        });
                     });
                     Session.set('loadingCollaterals', false);
                 });

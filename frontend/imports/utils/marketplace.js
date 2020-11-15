@@ -939,6 +939,17 @@ class Marketplace {
     });
   }
 
+  async getCollateralBalance(address, includeOrderbook) {
+    return new Promise((resolve, reject) => {
+      this.contract.getCollateralBalance(address, includeOrderbook, (error, balance) => {
+        if (!error) {
+          resolve(balance);
+        }
+        else { reject(error); }
+      });
+    });
+  }
+
   async getCollaterals() {
     let collaterals = [];
     let collateralsCount = await this.getCollateralsCount();
