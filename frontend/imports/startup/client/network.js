@@ -11,6 +11,7 @@ import Limits from '/imports/api/limits';
 import Transactions from '/imports/api/transactions';
 import Tokens from '/imports/api/tokens';
 import TokenEvents from '/imports/api/tokenEvents';
+import Collaterals from '/imports/api/collaterals';
 import WGNT from '/imports/api/wgnt';
 import { Offers, Status } from '/imports/api/offers';
 import { doHashChange, formatNumber } from '/imports/utils/functions';
@@ -120,15 +121,17 @@ async function checkUCPricefromCrawlingBand() {
     console.log('UC FloorpriceX: ' + formatNumber(floorPrice/1000000, 6));
     Session.set('floorPrice', floorPrice/1000000);
 
-    // test marketplace
-    const marketplace = new Marketplace(Dapple.env);
-    const collateralsCount = await marketplace.getCollateralsCount();
-    console.log('UC collateralsCount: ' + collateralsCount);
-    const collaterals = await marketplace.getCollaterals();
-    //console.log('UC collateralAddress: ' + collaterals);
-    if(collateralsCount > 0) {
-    console.log('UC collaterals: ' + collaterals[0].symbol);
-    }
+    // // test marketplace
+    // const marketplace = new Marketplace(Dapple.env);
+    // const collateralsCount = await marketplace.getCollateralsCount();
+    // Session.set('collateralsCount', collateralsCount.toNumber());
+    // console.log('UC collateralsCount: ' + collateralsCount);
+    // const collaterals = await marketplace.getCollaterals();
+    // //console.log('UC collateralAddress: ' + collaterals);
+    // if(collateralsCount > 0) {
+    //   Session.set('collaterals', collaterals);
+    //   console.log('UC collaterals: ' + collaterals[0].symbol);
+    // }
   }
 }
 
@@ -196,14 +199,14 @@ function denotePrecision() {
 }
 
 // Initialize everything on new network
-function initNetwork(newNetwork) {
+async function initNetwork(newNetwork) {
   Dapple.init(newNetwork);
   const market = Dapple['maker-otc'].environments.kovan.otc;
   checkAccounts().then(async (account) => {
     await checkIfUserHasOldMKR(account);
     checkIfUserHasBalanceInOldWrapper(account);
   });
-  checkUCPricefromCrawlingBand();
+  await checkUCPricefromCrawlingBand();
   const isMatchingEnabled = checkIfOrderMatchingEnabled(market.type);
   const isBuyEnabled = checkIfBuyEnabled(market.type);
   Promise.all([isMatchingEnabled, isBuyEnabled]).then(() => {
@@ -216,6 +219,7 @@ function initNetwork(newNetwork) {
     Tokens.sync();
     Limits.sync();
     Offers.sync();
+    Collaterals.sync();
   });
 }
 
@@ -344,6 +348,7 @@ function initSession() {
   if (!Session.get('volumeSelector')) {
     Session.set('volumeSelector', 'quote');
   }
+  Session.set('loadingCollaterals', true);
 }
 
 /**
@@ -362,6 +367,7 @@ Meteor.startup(() => {
           Limits.sync();
           Transactions.sync();
           TokenEvents.syncTimestamps();
+          Collaterals.sync();
         });
 
         web3Obj.eth.isSyncing((error, sync) => {
@@ -437,6 +443,7 @@ Meteor.startup(() => {
 
 Meteor.autorun(() => {
   TokenEvents.watchEvents();
+  Collaterals.sync();
   WGNT.watchBrokerCreation();
   WGNT.watchBrokerTransfer();
   WGNT.watchBrokerClear();

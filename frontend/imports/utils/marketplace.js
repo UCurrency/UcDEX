@@ -909,8 +909,10 @@ class Marketplace {
   async getCollateralsCount() {
     return new Promise((resolve, reject) => {
       this.contract.getCollateralsCount((error, ccount) => {
-        if (!error) resolve(ccount);
-        else reject();
+        if (!error) {
+          resolve(ccount);
+        }
+        else { reject(error); }
       });
     });
   }
@@ -957,25 +959,25 @@ class Marketplace {
     return collaterals;
   }
 
-  async getEstimatedCeilingPrice() {
-    return new Promise((resolve, reject) => {
-      console.log('Getting celiling price ...');
-      this.contract.getEstimatedCeilingPrice(async (e, tx) => {
-        console.log('getEstimatedCeilingPrice TX number: ', tx);
-        if (!e) {
-          /* eslint-disable no-underscore-dangle */
-          try {
-            await this._waitForTxReceipt(tx);
-            resolve();
-          } catch (rejection) {
-            reject();
-          }
-        } else {
-          reject();
-        }
-      });
-    });
-  }
+  // async getEstimatedCeilingPrice() {
+  //   return new Promise((resolve, reject) => {
+  //     console.log('Getting celiling price ...');
+  //     this.contract.getEstimatedCeilingPrice(async (e, tx) => {
+  //       console.log('getEstimatedCeilingPrice TX number: ', tx);
+  //       if (!e) {
+  //         /* eslint-disable no-underscore-dangle */
+  //         try {
+  //           await this._waitForTxReceipt(tx);
+  //           resolve();
+  //         } catch (rejection) {
+  //           reject();
+  //         }
+  //       } else {
+  //         reject();
+  //       }
+  //     });
+  //   });
+  // }
 
   async _waitForTxReceipt(tx) {
     return new Promise((resolve, reject) => {

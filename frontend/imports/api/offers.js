@@ -287,7 +287,7 @@ Offers.sync = () => {
   Offers.syncOffers();
   // As it is expensive to load historical Trades, we load them only for the last week
   // Enough for the Volume chart and the Market History section
-  Offers.getHistoricalTradesRange(60).then(Offers.syncTrades); // JON notes: changed from 6 (1 week) to 60 (2 months)
+  Offers.getHistoricalTradesRange(600).then(Offers.syncTrades); // JON notes: changed from 6 (1 week) to 60 (2 months)
 };
 
 Offers.syncOffers = () => {

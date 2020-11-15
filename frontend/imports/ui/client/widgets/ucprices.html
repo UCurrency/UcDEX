@@ -8,22 +8,50 @@
         </div>
       </div>
       <div>
-        <table class="t-markets">
+        <table class="t-markets" style="">
           <thead>
           <tr>
-            <th></th>
-            <th class="th-pair">CURRENCY</th>
+            <!-- <th></th> -->
+            <th class="th-pair" style="">CURRENCY</th>
             <th class="th-price">PRICE</th>
+            <th class="th-price">RATE</th>
             <th class="th-volume">WEEKLY VOLUME</th>
             <th></th>
           </tr>
           </thead>
+          {{#if loadingCollaterals}}
+            <div class="loading-market-history">{{{loadingIcon}}} Loading collaterals...</div>
+          {{else}}
           <tbody class="tbody-not-scrolling">
+            {{#each collaterals}}
+              <!-- <tr class="clickable {{ selected(this) }}" {{b "click: select(this)"}}> -->
+              <tr class="clickable">
+                <!-- <td></td> -->
+                <td class="td-pair">
+                  <span class="base">{{this.symbol}}</span>
+                </td>
+                <td class="td-price">{{{formatNumber this.price '' true}}}</td>
+                <td class="td-price">
+                  {{{formatNumber this.price '' true}}}
+                </td>
+                <td class="td-volume">
+                  N/A
+                </td>
+                <td></td>
+              </tr>
+          {{/each}}
+        </tbody>
+          {{/if }}
 
-            <!--{{sort}}-->
-          </tbody>
-          <tfoot>
-
+          <tfoot style="color:black;">
+             <!-- {{#if collateralsCount equals 0}}
+             <p>NO COL IS {{collateralsCount}}</p>
+             {{else}}
+             <p>YES COL IS {{collateralsCount}} OR {{{formatNumber collateralsCount '' true}}}</p>
+             <p>SEM THIS: <span {{b "text: collateralsCount"}}></span></p>
+             <p>Array lengthx: <span class="text-danger" {{b "text: testText"}}></span></p>
+             <p>COL SYMBOL: <span class="text-danger" {{b "text: testText2"}}></span></p>
+             {{/if }} -->
           </tfoot>
         </table>
 

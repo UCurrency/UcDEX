@@ -11,10 +11,10 @@ import './history.html';
 Template.history.viewmodel({
   autorun() {
     if (this.historyType() === 'depositHistory') {
-      Session.set('loadingWrapHistory', true);
+      //Session.set('loadingWrapHistory', true);  // JON - for some unknown reason, this runs at end and keeps loading on page wihout showing data
     }
     if (this.historyType() === 'transferHistory') {
-      Session.set('loadingTransferHistory', true);
+      //Session.set('loadingTransferHistory', true); // JON - for some unknown reason, this runs at end and keeps loading on page wihout showing data
     }
   },
   currencyClass(token) {
@@ -31,6 +31,8 @@ Template.history.viewmodel({
     }, { sort: { blockNumber: -1 } });
     Session.set('historyCount', historyResult.count());
     TokenEvents.syncTimestamps(); // (JON) added by John to fix date sync on local blockchain (when latestblock is not updated regularty)
+    Session.set('loadingTransferHistory', false); // JON to fix loading showing
+    Session.set('loadingWrapHistory', false);
     return historyResult;
   },
   transferHistory() {

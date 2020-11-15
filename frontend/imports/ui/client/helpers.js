@@ -9,6 +9,7 @@ import { Dapple, web3Obj } from 'meteor/makerotc:dapple';
 import { moment } from 'meteor/momentjs:moment';
 
 import Tokens from '/imports/api/tokens';
+import Collaterals from '/imports/api/collaterals';
 import { Offers, Trades, IndividualTrades, Status } from '/imports/api/offers';
 
 import { txHref, thousandSeparator, formatNumber, fractionSeparator } from '/imports/utils/functions';
@@ -89,6 +90,12 @@ Template.registerHelper('loadingTradeHistory', () => Session.get('loadingTradeHi
 
 Template.registerHelper('loadingIndividualTradeHistory', () => Session.get('loadingIndividualTradeHistory'));
 
+Template.registerHelper('loadingCollaterals', () => Session.get('loadingCollaterals'));
+
+Template.registerHelper('ceilingPrice', () => Session.get('ceilingPrice'));
+
+Template.registerHelper('floorPrice', () => Session.get('floorPrice'));
+
 //Template.registerHelper('historyCount', () => Session.get('historyCount')); // (JON) ADDED to replace historyCount method (improve performance)
 
 Template.registerHelper('loadedCurrencies', () => Session.get('balanceLoaded') === true
@@ -112,6 +119,8 @@ Template.registerHelper('allTokens', () => {
 });
 
 Template.registerHelper('findToken', (token) => Tokens.findOne(token));
+
+Template.registerHelper('findCollateral', (collateral) => Collaterals.findOne(collateral));
 
 Template.registerHelper('countLastTrades', () => {
   const quoteCurrency = Session.get('quoteCurrency');

@@ -468,7 +468,7 @@ Template.chart.viewmodel({
       days = [];
       volumes.base = {};
       volumes.quote = {};
-      for (let i = 30; i >= 0; i--) { // JON notes: 6 = 6 days history? changed to 30
+      for (let i = 300; i >= 0; i--) { // JON notes: 6 = 6 days history? changed to 30
         day = moment(Date.now()).startOf('day').subtract(i, 'days');
         days.push(day);
         volumes.base[day.unix() * 1000] = new BigNumber(0);
