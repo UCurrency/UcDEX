@@ -96,6 +96,16 @@ Template.registerHelper('ceilingPrice', () => Session.get('ceilingPrice'));
 
 Template.registerHelper('floorPrice', () => Session.get('floorPrice'));
 
+// returns the collateral
+Template.registerHelper('selectedCollateral', () => Session.get('selectedCollateral'));
+
+// returns true if user has chossen to Burn UCs, instead of minting
+Template.registerHelper('isBurning', () => Session.get('burning') === true);
+
+// returns true or false whether a collateral has been selected or not
+Template.registerHelper('collateralSelected', () => Session.get('loadingCollaterals') === false
+&& Session.get('selectedCollateral'));
+
 //Template.registerHelper('historyCount', () => Session.get('historyCount')); // (JON) ADDED to replace historyCount method (improve performance)
 
 Template.registerHelper('loadedCurrencies', () => Session.get('balanceLoaded') === true

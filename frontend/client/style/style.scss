@@ -680,6 +680,9 @@ table {
   padding: 30px 0 10px 30px;
   overflow: hidden;
 }
+.order-section.col-md-12 {
+  width: 918px;
+}
 
 .order-section-first {
   @extend .order-section;
@@ -933,6 +936,7 @@ table {
 
 .input-section {
   padding-right: 30px;
+  color: #ABABAD; // adjusted by JON to avoid white txt on white background (white comes from body color).
 
   .available {
     font-family: Montserrat, sans-serif;
@@ -2301,6 +2305,116 @@ button.dex-btn-default.sell, button.dex-btn-max.sell {
   }
 }
 
+.t-collaterals {
+  @extend .t-scroll;
+  text-align: center !important;
+  thead {
+    tr {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      th {
+        &:first-child {
+          width: 10px !important;
+        }
+        &.th-pair {
+          text-align: center;
+          max-width: 100px !important;
+        }
+        &.th-price {
+          max-width: 110px !important;
+          text-align: center !important;
+        }
+        &.th-volume {
+          max-width: 110px !important;
+          text-align: center !important;
+          padding-right: 10px;
+          a {
+            text-decoration: none;
+            color: inherit;
+          }
+        }
+        &:last-child {
+          width: 0 !important;
+        }
+      }
+    }
+  }
+  tbody {
+    tr {
+      &.dex-show-more-row, &.dex-show-less-row {
+        background: none;
+        border-top: 1px #F3F3F4 solid !important;
+        border-bottom: 1px #F3F3F4 solid !important;
+        cursor: pointer;
+      }
+
+      td {
+        &:first-child {
+          width: 10px !important;
+
+          &.more, &.less {
+            font-family: Montserrat, sans-serif;
+            width: 440px !important;
+            text-align: center;
+            font-weight: 500;
+            font-size: 12px;
+            color: #666669;
+
+            span {
+              line-height: 1.666667;
+            }
+          }
+        }
+        &.td-pair {
+          text-align: center;
+          max-width: 100px !important;
+          font-weight: 900;
+
+          .quote {
+            color: #ABABAD;
+            color: rgba(74, 74, 74, 0.60);
+          }
+
+          .base, .quote {
+            display: inline-block;
+            width: 50px;
+            font-size: 14px;
+            text-align: center;
+          }
+        }
+        &.td-price {
+          max-width: 110px !important;
+          text-align: center;
+          span.loading-icon {
+            img {
+              transform: translate(-4px, -3px) !important;
+            }
+          }
+        }
+        &.td-volume {
+          max-width: 110px !important;
+          text-align: center;
+          padding-right: 10px;
+          span.base-quote-currency {
+            font-weight: 700;
+            font-size: 10px;
+            color: #68686C;
+            letter-spacing: 1px;
+            display: inline-block;
+            //text-align: left;
+            //margin-left: 2px;
+          }
+          span.loading-icon {
+            img {
+              transform: translate(-28px, -3px) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 span.loading-icon {
   img {
     transform: translate(0px, -3px);
@@ -2836,7 +2950,7 @@ a.logo:hover {
   width: 100%;
 }
 
-#neworder {
+#neworder, #newucorder {
   .dex-btn-max {
     width: 75px;
   }

@@ -4,19 +4,21 @@
         <div class="col-xs-12">
           <h2>
             {{title}}
+            <small>
             {{#if equals title 'MINT'}}
             (US$ {{{formatNumber ceilingPrice '6' true}}})
             {{else}}
             (US$ {{{formatNumber floorPrice '6' true}}})
             {{/if}}
+          </small>
           </h2>
         </div>
       </div>
       <div>
-        <table class="t-markets" style="">
+        <table class="t-collaterals" style="">
           <thead>
           <tr>
-            <!-- <th></th> -->
+            <th></th>
             <th class="th-pair" style="">CURRENCY</th>
             <th class="th-price">PRICE</th>
             <th class="th-price">RATE</th>
@@ -34,8 +36,8 @@
           <tbody class="tbody-not-scrolling">
             {{#each collaterals}}
               <!-- <tr class="clickable {{ selected(this) }}" {{b "click: select(this)"}}> -->
-              <tr class="clickable">
-                <!-- <td></td> -->
+              <tr class="clickable" {{b "click: select(this, title)"}}>
+                <td></td>
                 <td class="td-pair">
                   <span class="base">{{this.symbol}}</span>
                 </td>

@@ -45,7 +45,16 @@ Template.ucprices.viewmodel({
     collateralsCount() {
         return Session.get('collateralsCount') || this.collaterals().count();
     },
-    // testText: '',
+    select(collateral, title) {
+        this.selectedCollateral(collateral.symbol);
+        Session.set('selectedCollateral', this.selectedCollateral());
+        if(title === "BURN") {
+            Session.set('burning', true);
+        } else {
+            Session.set('burning', false);
+        }
+    },
+    selectedCollateral: '',
     // testText2() {
     //     return this.collaterals()[0].symbol;
     // },

@@ -17,35 +17,52 @@
           {{> ucprices title='MINT'}}
         </section>
       </div>
-      <div class="order-center">
+      <!-- <div class="order-center">
         <section class="order-section col-md-6 chart">
           {{> mintchart title='CHART'}}
         </section>
       </div>
     </div>
-    <div class="row">
+    <div class="row"> -->
       <div class="order-center">
         <section class="order-section col-md-6 markets">
           {{> ucprices title='BURN'}}
         </section>
       </div>
-      <div class="order-center">
+      <!-- <div class="order-center">
         <section class="order-section col-md-6 chart">
           {{> mintchart title='CHART'}}
         </section>
-      </div>
+      </div> -->
     </div>
-    <!-- {{#if loadedCurrencies}}
+    {{#if collateralSelected}}
       <div class="row">
         <div class="order-center">
-          <section class="order-section col-md-6">
-            {{> neworder title='BUY' orderType='buy'}}
+          {{#if not isBurning}}
+          <section class="order-section col-md-12">
+            {{> newucorder title='MINT' orderType='buy'}}
           </section>
-          <section class="order-section col-md-6">
-            {{> neworder title='SELL' orderType='sell'}}
+          {{else}}
+          <section class="order-section col-md-12">
+            {{> newucorder title='BURN' orderType='sell'}}
           </section>
+          {{/if}}
         </div>
       </div>
+      {{else}}
+      <div class="row">
+        <div class="col-md-12 text-center">
+          {{#if loadingCollaterals}}
+          <span>
+            {{{loadingIcon 'large'}}}
+          </span>
+          {{else}}
+            <span>Select one option above.</span>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+      <!--
       <div class="row">
         <div class="order-center">
           <section class="order-section col-md-6">

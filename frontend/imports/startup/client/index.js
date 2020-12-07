@@ -17,6 +17,7 @@ import '../../ui/client/widgets/markets.js';
 import '../../ui/client/widgets/myorders.js';
 import '../../ui/client/widgets/newallowance.js';
 import '../../ui/client/widgets/neworder.js';
+import '../../ui/client/widgets/newucorder.js';
 import '../../ui/client/widgets/offermodal.js';
 import '../../ui/client/widgets/orders.js';
 import '../../ui/client/widgets/orderbook.html';
