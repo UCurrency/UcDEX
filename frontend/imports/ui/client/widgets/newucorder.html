@@ -2,7 +2,13 @@
   <div class="buy-sell-section input-section">
     <form id="newucorder">
       <h2>
-        {{title}} w/ {{selectedCollateral}}
+        {{title}}
+        {{#if equals type 'buy'}}
+        w/
+        {{else}}
+        for
+        {{/if}}
+        {{selectedCollateral}}
         <!-- {{> whatisthis section="new-order"}} -->
       </h2>
       <div class="available">
@@ -10,11 +16,11 @@
           AVAILABLE
         </span>
         {{#if equals type 'buy'}}
-          <span class="available-amount">{{{formatBalance quoteAvailable '' '' true}}}</span>
-          <span class="available-currency">{{quoteCurrency}}</span>
+          <span class="available-amount">{{{formatBalance collateralAvailable '' '' true}}}</span>
+          <span class="available-currency">{{selectedCollateral}}</span>
         {{else}}
-          <span class="available-amount">{{{formatBalance baseAvailable '' '' true}}}</span>
-          <span class="available-currency">{{baseCurrency}}</span>
+          <span class="available-amount">{{{formatBalance ucAvailable '' '' true}}}</span>
+          <span class="available-currency">UC</span>
         {{/if}}
       </div>
       <table class="bordered">
@@ -24,8 +30,8 @@
             <span>PRICE</span>
           </th>
           <td class="dex-input-cell">
-            <input data-requires-precision type="number" class="input" step="any" min="" placeholder="0"
-              {{b "value: price, input: calcTotal, enable: canChangePrice"}}>
+            <input data-requires-precision type="number" class="input" step="any" min="" placeholder="0" disabled="disabled"
+              {{b "value: collateralRate"}}>
           </td>
           <td class="dex-currency-cell">
             <span>{{quoteCurrency}}</span>
@@ -40,7 +46,7 @@
               {{b "value: amount, input: calcTotal, enable: canChangeAmountAndTotal, attr: { max: maxAmount }"}}>
           </td>
           <td class="dex-currency-cell">
-            <span>{{baseCurrency}}</span>
+            <span>UC</span>
           </td>
         </tr>
         <tr class="row-input-line">
@@ -60,7 +66,7 @@
             </div>
           </td>
           <td class="dex-currency-cell">
-            <span>{{quoteCurrency}}</span>
+            <span>{{selectedCollateral}}</span>
           </td>
         </tr>
         </tbody>

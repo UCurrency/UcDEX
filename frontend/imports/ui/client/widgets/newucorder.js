@@ -5,6 +5,7 @@ import { web3Obj } from 'meteor/makerotc:dapple';
 import Tokens from '/imports/api/tokens';
 import { Offers } from '/imports/api/offers';
 import { $ } from 'meteor/jquery';
+import Collaterals from '/imports/api/collaterals';
 
 import '/imports/ui/client/shared.js';
 import './newucorder.html';
@@ -16,6 +17,7 @@ Template.newucorder.viewmodel({
   validAmount: true,
   total: '',
   price: '',
+  collateralRate: '',
   amount: '',
   shouldShowMaxBtn: false,
   events: {
@@ -40,8 +42,8 @@ Template.newucorder.viewmodel({
     },
   },
   autorun() {
-    const order = Session.get('selectedOrder');
-    if (order) {
+    const collateralSymbol = Session.get('selectedCollateral');
+    if (collateralSymbol) {
       /*
        * If we have an existing offer with the given characteristics
        *  PRICE: 2.00000
@@ -63,24 +65,37 @@ Template.newucorder.viewmodel({
        * */
       this.amount('');
       this.price('');
+      this.collateralRate('');
       this.total('');
       this.offerAmount(0);
       this.offerPrice(0);
       this.offerTotal(0);
 
-      const actionType = order.type === 'bid' ? 'buy' : 'sell';
-      const orderData = Offers.findOne({ _id: order.id });
-      if (orderData) {
-        this.price(orderData[`${order.type}_price`]);
-
-        if (actionType === this.type()) {
-          this.amount(web3Obj.fromWei(orderData[`${actionType}HowMuch`]));
+      const collateral = Collaterals.findOne({ symbol: collateralSymbol });
+      if (collateral) {
+        if(this.type() == 'buy') {
+          this.collateralRate(collateral.mintRate);
         } else {
-          this.amount(0);
+          this.collateralRate(collateral.burnRate);
         }
-
-        this.calcTotal();
+        //this.calcTotal();
       }
+
+      // const actionType = order.type === 'bid' ? 'buy' : 'sell';
+      // const orderData = Offers.findOne({ _id: order.id });
+      // if (orderData) {
+      //   this.price(orderData[`${order.type}_price`]);
+
+      //   if (actionType === this.type()) {
+      //     this.amount(web3Obj.fromWei(orderData[`${actionType}HowMuch`]));
+      //   } else {
+      //     this.amount(0);
+      //   }
+
+      //   this.calcTotal();
+      // }
+
+
     }
   },
   type() {
@@ -113,12 +128,13 @@ Template.newucorder.viewmodel({
   canChangeAmountAndTotal() {
     const marketOpen = Session.get('market_open');
     if (!marketOpen) return false;
-    try {
-      const price = new BigNumber(this.price());
-      return !price.isNaN() && price.gt(0);
-    } catch (e) {
-      return false;
-    }
+    // try {
+    //   const price = new BigNumber(this.price());
+    //   return !price.isNaN() && price.gt(0);
+    // } catch (e) {
+    //   return false;
+    // }
+    return true;
   },
   calcTotal() {
     this.validAmount(true);
@@ -128,9 +144,9 @@ Template.newucorder.viewmodel({
       return;
     }
     try {
-      const price = new BigNumber(new BigNumber(this.price(), 10).toFixed(this.precision(), 6));
+      const collateralRate = new BigNumber(new BigNumber(this.collateralRate(), 10).toFixed(this.precision(), 6));
       const amount = new BigNumber(new BigNumber(this.amount(), 10).toFixed(this.precision(), 6));
-      const total = new BigNumber(price.times(amount).toFixed(this.precision(), 6), 10);
+      const total = new BigNumber(collateralRate.times(amount).toFixed(this.precision(), 6), 10);
       if (total.isNaN()) {
         this.total('0');
       } else {
@@ -221,6 +237,20 @@ Template.newucorder.viewmodel({
        */
       return (balance.equals(0) && !this.price()) || (balance.gt(0) && !this.price());
     }
+  },
+  ucAvailable() {
+    const token = Tokens.findOne('UC');
+    if (token) {
+      return token.balance;
+    }
+    return 0;
+  },
+  collateralAvailable() {
+    const token = Tokens.findOne(Session.get('selectedCollateral'));
+    if (token) {
+      return token.balance;
+    }
+    return 0;
   },
   quoteAvailable() {
     const token = Tokens.findOne(Session.get('quoteCurrency'));
@@ -321,11 +351,11 @@ Template.newucorder.viewmodel({
     let available = 0;
     if (!marketOpen) return false;
     if (this.type() === 'buy') {
-      available = web3Obj.fromWei(this.quoteAvailable()).toString(10);
+      available = web3Obj.fromWei(this.collateralAvailable()).toString(10);
       this.total(available);
       this.calcAmount();
     } else if (this.type() === 'sell') {
-      available = web3Obj.fromWei(this.baseAvailable()).toString(10);
+      available = web3Obj.fromWei(this.ucAvailable()).toString(10);
       this.amount(available);
       this.calcTotal();
     }
