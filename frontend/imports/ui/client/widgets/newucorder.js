@@ -20,6 +20,7 @@ Template.newucorder.viewmodel({
   collateralRate: '',
   amount: '',
   shouldShowMaxBtn: false,
+  shouldShowMaxBtn2: false,
   events: {
     'input input, click .dex-btn-max': function () {
       const order = Session.get('selectedOrder');
@@ -106,15 +107,21 @@ Template.newucorder.viewmodel({
   },
   sellCurrency() {
     if (this.type() === 'buy') {
-      return Session.get('quoteCurrency');
+      return Session.get('selectedCollateral'); // Session.get('quoteCurrency');
     }
-    return Session.get('baseCurrency');
+    return 'UC';
   },
   onFocus() {
     this.shouldShowMaxBtn(true);
   },
   onBlur() {
     this.shouldShowMaxBtn(false);
+  },
+  onFocus2() {
+    this.shouldShowMaxBtn2(true);
+  },
+  onBlur2() {
+    this.shouldShowMaxBtn2(false);
   },
   focusOnInput(event) {
     $(event.target).find('input.with-max-btn').focus();
@@ -164,17 +171,13 @@ Template.newucorder.viewmodel({
       return;
     }
     try {
-      const price = new BigNumber(new BigNumber(this.price(), 10).toFixed(this.precision(), 6));
+      const collateralRate = new BigNumber(new BigNumber(this.collateralRate(), 10).toFixed(this.precision(), 6));
       const total = new BigNumber(new BigNumber(this.total(), 10).toFixed(this.precision(), 6));
-      if (total.isZero() && price.isZero()) {
+      const amount = new BigNumber(total.div(collateralRate).toFixed(this.precision(), 6), 10);
+      if (amount.isNaN()) {
         this.amount('0');
       } else {
-        const amount = new BigNumber(total.div(price).toFixed(this.precision(), 6), 10);
-        if (amount.isNaN()) {
-          this.amount('0');
-        } else {
-          this.amount(amount.toString(10));
-        }
+        this.amount(amount.toString(10));
       }
     } catch (e) {
       this.amount('0');
@@ -183,7 +186,7 @@ Template.newucorder.viewmodel({
   maxAmount() {
     let maxAmount = '0';
     if (this.type() === 'sell') {
-      const token = Tokens.findOne(Session.get('baseCurrency'));
+      const token = Tokens.findOne('UC'); // Tokens.findOne(Session.get('baseCurrency'));
       if (token) {
         const balance = new BigNumber(token.balance);
         /* const allowance = new BigNumber(token.allowance);
@@ -198,8 +201,9 @@ Template.newucorder.viewmodel({
   maxTotal() {
     // Only allow change of total if price is well-defined
     try {
-      const price = new BigNumber(this.price());
-      if ((price.isNaN() || price.isZero() || price.isNegative())) {
+      //const price = new BigNumber(this.price());
+      const collateralRate = new BigNumber(new BigNumber(this.collateralRate(), 10).toFixed(this.precision(), 6));
+      if ((collateralRate.isNaN() || collateralRate.isZero() || collateralRate.isNegative())) {
         return '0';
       }
     } catch (e) {
@@ -208,7 +212,7 @@ Template.newucorder.viewmodel({
     // If price is well-defined, take minimum of balance and allowance of currency, if 'buy', otherwise Infinity
     let maxTotal = '0';
     if (this.type() === 'buy') {
-      const token = Tokens.findOne(Session.get('quoteCurrency'));
+      const token = Tokens.findOne(Session.get('selectedCollateral'));
       if (token) {
         const balance = new BigNumber(token.balance);
         /* const allowance = new BigNumber(token.allowance);
@@ -226,8 +230,8 @@ Template.newucorder.viewmodel({
     try {
       balance = new BigNumber(token.balance);
       const hasPositiveBalance = balance.gt(0) && balance.gte(web3Obj.toWei(new BigNumber(this.type() === 'sell' ? this.amount() : this.total())));
-      const hasZeroBalanceWithNothingAsPrice = balance.equals(0) && !this.price();
-      return hasPositiveBalance || hasZeroBalanceWithNothingAsPrice;
+      //const hasZeroBalanceWithNothingAsPrice = balance.equals(0) && !this.price();
+      return hasPositiveBalance;// || hasZeroBalanceWithNothingAsPrice;
     } catch (e) {
       /**
        * This error will happen if we try to create BigNumber from non-number value.
@@ -292,14 +296,15 @@ Template.newucorder.viewmodel({
   canSubmit() {
     try {
       const type = this.type();
-      const price = new BigNumber(this.price());
+      const collateralRate = new BigNumber(new BigNumber(this.collateralRate(), 10).toFixed(this.precision(), 6));
+      //const price = new BigNumber(this.price());
       const amount = new BigNumber(this.amount());
       const maxAmount = new BigNumber(this.maxAmount());
       const total = new BigNumber(this.total());
       const maxTotal = new BigNumber(this.maxTotal());
       const marketOpen = Session.get('market_open');
       const validTokenPair = Session.get('quoteCurrency') !== Session.get('baseCurrency');
-      return marketOpen && price.gt(0) && amount.gt(0) && total.gt(0) && validTokenPair &&
+      return marketOpen && collateralRate.gt(0) && amount.gt(0) && total.gt(0) && validTokenPair &&
         (type !== 'buy' || total.lte(maxTotal)) && (type !== 'sell' || amount.lte(maxAmount));
     } catch (e) {
       return false;

@@ -41,9 +41,16 @@
           <th class="dex-label-cell">
             <span>AMOUNT</span>
           </th>
-          <td class="dex-input-cell">
-            <input data-requires-precision type="number" class="input" step="any" min="" placeholder="0"
-              {{b "value: amount, input: calcTotal, enable: canChangeAmountAndTotal, attr: { max: maxAmount }"}}>
+          <td class="dex-input-cell" {{b "click:focusOnInput"}}>
+            <div {{b "focusin: onFocus2, focusout: onBlur2"}}>
+              {{#if and canAutofill shouldShowMaxBtn2 }}
+                <button type="button" class="btn btn-sm btn-default dex-btn-max {{type}}"
+                  {{b "click: autofill"}}>{{title}} MAX
+                </button>
+              {{/if}}
+              <input data-requires-precision type="number" class="input with-max-btn" step="any" min="" placeholder="0"
+                {{b "value: amount, input: calcTotal, enable: canChangeAmountAndTotal, attr: { max: maxAmount }"}}>
+            </div>
           </td>
           <td class="dex-currency-cell">
             <span>UC</span>
