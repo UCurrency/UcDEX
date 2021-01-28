@@ -371,7 +371,7 @@ Template.newucorder.viewmodel({
   },
   showConfirmation(event) {
     event.preventDefault();
-    this.offerPrice(this.price());
+    this.offerPrice(this.collateralRate()); //this.price());
     this.offerAmount(this.amount());
     this.offerTotal(this.total());
     this.offerType(this.type());
